@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="new-task">
+  <h2>Add Task</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add</button>
+  </form>
+</section>
+
+<section class="tasks">
+  <h2>Your Tasks</h2>
+  <ul class="task-list">
+    {% for task in tasks %}
+      <li class="task-item">
+        <a class="toggle" href="{% url 'tasks:toggle' task.pk %}">
+          {% if task.completed %}✅{% else %}⬜{% endif %}
+        </a>
+        <span class="title {% if task.completed %}done{% endif %}">{{ task.title }}</span>
+        {% if task.description %}
+          <span class="desc">{{ task.description }}</span>
+        {% endif %}
+        <a class="edit" href="{% url 'tasks:edit' task.pk %}">Edit</a>
+        <form class="inline" method="post" action="{% url 'tasks:delete' task.pk %}">
+          {% csrf_token %}
+          <button class="delete" type="submit">Delete</button>
+        </form>
+      </li>
+    {% empty %}
+      <li>No tasks yet</li>
+    {% endfor %}
+  </ul>
+  </section>
+{% endblock %}
